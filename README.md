@@ -1,9 +1,9 @@
-# Workday Loop (VARDİYA)
+# Workday Loop
 
 > *"Bu bir problem mi, yoksa sen buna alıştın mı?"*
 
 ![Unity Version](https://img.shields.io/badge/Unity-6.0.0.62f1-black?logo=unity)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac)
 ![Genre](https://img.shields.io/badge/Genre-Psychological%20Thriller-red)
 ![Status](https://img.shields.io/badge/Status-Completed-green)
 
