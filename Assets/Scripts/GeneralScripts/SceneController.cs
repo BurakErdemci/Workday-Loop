@@ -7,6 +7,67 @@ using System.Collections;
 public class SceneController : MonoBehaviour
 {
     private static SceneController _instance;
+    [Header("Salvation Müzikleri")]
+    public AudioSource weightOfTheWorld;
+    
+   
+
+    [Header("Settings")]
+    public GameObject playerPrefab;
+    public SpriteRenderer faderSprite;
+    public float fadeDuration = 1f;
+
+    [Header("Portal Settings")]
+    public bool isPortal = false;
+    public string targetSceneName;
+
+    private static string lastSceneName = "";
+    private bool isPlayerNearby = false;
+    private CinemachineCamera globalVcam;
+    public void StartSalvationMusicSequence()
+    {
+       
+        if (weightOfTheWorld != null && weightOfTheWorld.isPlaying)
+        {
+            Debug.Log("<color=cyan>[DIVINE SILENCE]</color> Müzik zaten çalıyor, sadece ortam susturuluyor.");
+            SilenceEnvironmentOnly(); 
+            return;
+        }
+
+  
+        StartCoroutine(SalvationRoutine());
+    }
+    private void SilenceEnvironmentOnly()
+    {
+        AudioSource[] allSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+        foreach (var source in allSources)
+        {
+            
+            if (source != weightOfTheWorld)
+            {
+                source.DOFade(0f, 1.2f).SetUpdate(true).OnComplete(() => source.Stop());
+            }
+        }
+    }
+    private IEnumerator SalvationRoutine()
+    {
+       
+        yield return new WaitForSeconds(2f);
+
+        DayCycleManager.isDivineSilenceActive = true;
+
+      
+        SilenceEnvironmentOnly();
+
+      
+        if (weightOfTheWorld != null)
+        {
+            weightOfTheWorld.volume = 0f;
+            weightOfTheWorld.Play();
+            weightOfTheWorld.DOFade(0.8f, 3f).SetUpdate(true);
+            Debug.Log("<color=magenta>[DIVINE SILENCE]</color> Müzik ilk kez başlatıldı.");
+        }
+    }
     public static SceneController Instance
     {
         get
@@ -25,19 +86,6 @@ public class SceneController : MonoBehaviour
             return _instance;
         }
     }
-
-    [Header("Settings")]
-    public GameObject playerPrefab;
-    public SpriteRenderer faderSprite;
-    public float fadeDuration = 1f;
-
-    [Header("Portal Settings")]
-    public bool isPortal = false;
-    public string targetSceneName;
-
-    private static string lastSceneName = "";
-    private bool isPlayerNearby = false;
-    private CinemachineCamera globalVcam;
 
     private void Awake()
     {
@@ -65,6 +113,7 @@ public class SceneController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (Instance != this || isPortal || scene.name.Contains("Menu")) return;
+        
 
         DOTween.KillAll();
         StopAllCoroutines();
@@ -144,21 +193,11 @@ public class SceneController : MonoBehaviour
         string finalTarget = sceneName; 
 
        
-        if (!DayCycleManager.isSystemAbandoned && DayCycleManager.currentDay >= 5)
-        {
-            
-            if (finalTarget == "Scene_Road" && currentScene == "Scene_Home") finalTarget = "Scene_Office";
-            else if (finalTarget == "Scene_Road" && currentScene == "Scene_Office") finalTarget = "Scene_Home";
-        }
-
-   
-        if (DayCycleManager.currentDay >= 7 && finalTarget == "Scene_Office")
+        if (DayCycleManager.currentDay >= 7 && sceneName == "Scene_Office")
         {
             finalTarget = DayCycleManager.isSystemAbandoned ? "Scene_Final_Loop" : "Scene_SalvationEnding";
-            Debug.Log("<color=magenta>[FINAL]</color> 7. Gün tespiti. Finale gidiliyor: " + finalTarget);
         }
-
-       
+      
 
         lastSceneName = currentScene;
         faderSprite.transform.SetParent(null);

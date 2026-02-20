@@ -42,6 +42,13 @@ public class SalvationEndingScript : MonoBehaviour
     void Start()
     {
         
+        if (SceneController.Instance != null && SceneController.Instance.weightOfTheWorld != null)
+        {
+          
+            SceneController.Instance.weightOfTheWorld.Stop();
+            SceneController.Instance.weightOfTheWorld.DOKill(); 
+            Debug.Log("<color=cyan>[FINAL]</color> Arka plan müziği susturuldu. Sinematik başlıyor.");
+        }
         foreach (var p in panels) p.alpha = 0;
         welcomeText.alpha = 0;
         creditsGroup.alpha = 0;

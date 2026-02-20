@@ -16,6 +16,8 @@ public class DayCycleManager : MonoBehaviour
     
   
     public static bool hasWokenUpToday = false; 
+   
+    public static bool isDivineSilenceActive = false; 
 
     void Awake()
     {
@@ -108,6 +110,7 @@ public class DayCycleManager : MonoBehaviour
         
         // REİS EKLEME: New Game dendiğinde burayı da sıfırlıyoruz
         hasWokenUpToday = false; 
+        isDivineSilenceActive = false;
 
         Debug.Log("<color=white>[SYSTEM]</color> Tüm oyun verileri sıfırlandı. Yeni denek bekleniyor.");
     }
