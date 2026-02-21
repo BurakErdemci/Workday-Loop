@@ -24,31 +24,57 @@ public class SceneController : MonoBehaviour
     private static string lastSceneName = "";
     private bool isPlayerNearby = false;
     private CinemachineCamera globalVcam;
-    public void StartSalvationMusicSequence()
+   
+    public void StartSalvationMusicSequence(float delay)
+    {
+        
+        DayCycleManager.isDivineSilenceActive = true; 
+
+       
+        SilenceEverySoundInScene();
+
+        
+        if (weightOfTheWorld != null && !weightOfTheWorld.isPlaying)
+        {
+            StartCoroutine(DelayedMusicStart(delay));
+        }
+    }
+
+   
+    private IEnumerator DelayedMusicStart(float delay)
+    {
+        // 15 saniyelik o derin sessizlik süresi
+        yield return new WaitForSeconds(delay);
+
+        if (weightOfTheWorld != null && !weightOfTheWorld.isPlaying)
+        {
+            weightOfTheWorld.volume = 0f;
+            weightOfTheWorld.Play();
+            weightOfTheWorld.DOFade(0.8f, 4f).SetUpdate(true);
+            Debug.Log("<color=magenta>[MUSIC]</color> 15 saniye bitti, Weight of the World giriyor.");
+        }
+    }
+   
+    public void SilenceEverySoundInScene()
     {
        
-        if (weightOfTheWorld != null && weightOfTheWorld.isPlaying)
-        {
-            Debug.Log("<color=cyan>[DIVINE SILENCE]</color> Müzik zaten çalıyor, sadece ortam susturuluyor.");
-            SilenceEnvironmentOnly(); 
-            return;
-        }
+        string curScene = SceneManager.GetActiveScene().name;
+        if (curScene.Contains("Final") || curScene.Contains("Salvation")) return;
 
-  
-        StartCoroutine(SalvationRoutine());
-    }
-    private void SilenceEnvironmentOnly()
-    {
+        DayCycleManager.isDivineSilenceActive = true;
         AudioSource[] allSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+    
         foreach (var source in allSources)
         {
             
             if (source != weightOfTheWorld)
             {
-                source.DOFade(0f, 1.2f).SetUpdate(true).OnComplete(() => source.Stop());
+                source.Stop();
+                source.volume = 0;
             }
         }
     }
+
     private IEnumerator SalvationRoutine()
     {
        
@@ -56,8 +82,8 @@ public class SceneController : MonoBehaviour
 
         DayCycleManager.isDivineSilenceActive = true;
 
-      
-        SilenceEnvironmentOnly();
+
+        SilenceEverySoundInScene();
 
       
         if (weightOfTheWorld != null)
@@ -113,13 +139,16 @@ public class SceneController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (Instance != this || isPortal || scene.name.Contains("Menu")) return;
-        
 
-        DOTween.KillAll();
-        StopAllCoroutines();
+      
+        if (DayCycleManager.isDivineSilenceActive)
+        {
+            SilenceEverySoundInScene();
+        }
+
+       
         StartCoroutine(SafeSetupRoutine());
     }
-
     IEnumerator SafeSetupRoutine()
     {
         yield return null;

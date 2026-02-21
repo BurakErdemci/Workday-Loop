@@ -18,6 +18,8 @@ public class DayCycleManager : MonoBehaviour
     public static bool hasWokenUpToday = false; 
    
     public static bool isDivineSilenceActive = false; 
+    public static bool isRoadCinematicDone = false; 
+    public static bool isFinalSceneReached = false; 
 
     void Awake()
     {

@@ -48,6 +48,7 @@ public class SalvationEndingScript : MonoBehaviour
             SceneController.Instance.weightOfTheWorld.Stop();
             SceneController.Instance.weightOfTheWorld.DOKill(); 
             Debug.Log("<color=cyan>[FINAL]</color> Arka plan müziği susturuldu. Sinematik başlıyor.");
+            DayCycleManager.isDivineSilenceActive = false;
         }
         foreach (var p in panels) p.alpha = 0;
         welcomeText.alpha = 0;
