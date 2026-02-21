@@ -7541,6 +7541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalLight: {fileID: 1281054553}
   spotLightsGroup: {fileID: 0}
+  globalVolume: {fileID: 920705251}
   normalObjects:
   - {fileID: 357637663}
   - {fileID: 571337639}
@@ -7556,7 +7557,9 @@ MonoBehaviour:
   - {fileID: 1926368136}
   - {fileID: 599440693}
   - {fileID: 905060791}
-  - {fileID: 1857941651}
+  - {fileID: 1022472798}
+  - {fileID: 13223827}
+  - {fileID: 815891797}
   salvationSilence:
   - {fileID: 1967167856}
   - {fileID: 852761279}

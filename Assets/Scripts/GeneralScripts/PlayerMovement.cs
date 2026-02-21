@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip footstepClip;
     public float stepInterval = 0.45f; 
     private float stepTimer;
+    [Header("Loop Ending Sesleri")]
+    public AudioSource breathSource;
 
     void Update()
     {
@@ -43,6 +45,16 @@ public class PlayerMovement : MonoBehaviour
         {
            
             stepTimer = 0; 
+        }
+    }
+    void HandleLoopBreathing()
+    {
+       
+        if (DayCycleManager.isSystemAbandoned && DayCycleManager.currentDay >= 4)
+        {
+            if (!breathSource.isPlaying) breathSource.Play();
+         
+            breathSource.pitch = 0.8f + (DayCycleManager.currentDay * 0.05f);
         }
     }
 

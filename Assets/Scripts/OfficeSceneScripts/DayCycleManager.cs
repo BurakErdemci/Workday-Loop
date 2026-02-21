@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using DG.Tweening;
 
 public class DayCycleManager : MonoBehaviour
 {
@@ -109,11 +110,26 @@ public class DayCycleManager : MonoBehaviour
         tasksCompleted = 0;
         totalComplianceScore = 0;
         isSystemAbandoned = false;
-        
-        // REİS EKLEME: New Game dendiğinde burayı da sıfırlıyoruz
-        hasWokenUpToday = false; 
+        hasWokenUpToday = false;
         isDivineSilenceActive = false;
+        isRoadCinematicDone = false;
 
-        Debug.Log("<color=white>[SYSTEM]</color> Tüm oyun verileri sıfırlandı. Yeni denek bekleniyor.");
+     
+        var vcam = Object.FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+        if (vcam != null)
+        {
+            vcam.Lens.OrthographicSize = 5f; 
+            Debug.Log("[SYSTEM] Kamera ölçeği sıfırlandı.");
+        }
+
+       
+        AudioSource[] allSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+        foreach (var src in allSources)
+        {
+            src.pitch = 1.0f;
+            src.volume = 0.1f;
+        }
+
+        Debug.Log("<color=white>[SYSTEM]</color> Tüm oyun verileri ve donanım ayarları sıfırlandı.");
     }
 }

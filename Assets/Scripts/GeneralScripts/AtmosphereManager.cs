@@ -3,12 +3,14 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal; 
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering; 
 
 public class AtmosphereManager : MonoBehaviour
 {
-    [Header("Işık Ayarları")]
+    [Header("Işık ve Post-Process Ayarları")]
     public Light2D globalLight; 
     public GameObject spotLightsGroup; 
+    public Volume globalVolume; 
 
     [Header("1. Aşama: Gaslighting (Skor >= 2)")]
     public List<GameObject> normalObjects;   
@@ -26,7 +28,11 @@ public class AtmosphereManager : MonoBehaviour
 
     void Start()
     {
+       
         ApplyAtmosphere();
+        
+      
+        ApplyLoopRot();
 
         bool isSalvation = !DayCycleManager.isSystemAbandoned;
         string currentScene = SceneManager.GetActiveScene().name;
@@ -35,19 +41,25 @@ public class AtmosphereManager : MonoBehaviour
         {
             if (SceneController.Instance != null)
             {
-               
                 float delay = currentScene.Contains("Home") ? 15f : 0f;
                 SceneController.Instance.StartSalvationMusicSequence(delay);
             }
         }
     }
+
     public void ApplyAtmosphere()
     {
+        if (globalVolume != null && globalVolume.profile.TryGet(out DepthOfField dof))
+        {
+            dof.active = false;
+        }
+
         int score = DayCycleManager.totalComplianceScore;
         int day = DayCycleManager.currentDay;
         bool isSalvation = !DayCycleManager.isSystemAbandoned;
 
         float targetIntensity = 0.3f; 
+        
 
         if (isSalvation && score >= 2)
         {
@@ -90,4 +102,43 @@ public class AtmosphereManager : MonoBehaviour
             DOTween.To(() => globalLight.intensity, x => globalLight.intensity = x, targetIntensity, 2f).SetUpdate(true);
         }
     }
+
+    private void ApplyLoopRot()
+    {
+        int day = DayCycleManager.currentDay;
+        bool isAbandoned = DayCycleManager.isSystemAbandoned;
+
+       
+        if (isAbandoned && day >= 4)
+        {
+           
+            if (globalLight != null) 
+                DOTween.To(() => globalLight.intensity, x => globalLight.intensity = x, 0.1f, 5f).SetUpdate(true);
+
+          
+            if (globalVolume != null && globalVolume.profile.TryGet(out ColorAdjustments ca))
+            {
+                ca.saturation.Override(-100f);
+            }
+
+           
+            var vcam = Object.FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+            if (vcam != null)
+            {
+                DOTween.To(() => vcam.Lens.OrthographicSize, x => vcam.Lens.OrthographicSize = x, 3f, 5f).SetUpdate(true);
+            }
+
+            
+            AudioSource[] allSources = Object.FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+            foreach (var src in allSources)
+            {
+                if (src.name.Contains("Music") || src.name.Contains("Final")) continue; 
+                
+               
+                src.pitch = 0.8f; 
+                src.volume *= 1.2f; 
+            }
+            Debug.Log("<color=red>[LOOP]</color> Dünya çürümeye başladı.");
+        }
+    } 
 }
