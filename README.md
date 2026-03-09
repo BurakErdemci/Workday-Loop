@@ -1,4 +1,4 @@
-# 🖥️ WORKDAY-LOOP (VARDİYA)
+# 🖥️ WORKDAY-LOOP 
 ### 2D Psikolojik Gerilim / Anlatı Deneyimi
 
 > *"Bu bir problem mi, yoksa sen buna alıştın mı?"*
